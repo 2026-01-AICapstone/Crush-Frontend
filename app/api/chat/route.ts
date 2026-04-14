@@ -1,9 +1,11 @@
+export const dynamic = 'force-dynamic'
 export const maxDuration = 600 // 10분
 
 export async function POST(request: Request) {
   const body = await request.json()
 
-  const res = await fetch('http://localhost:8080/api/chat', {
+  const springUrl = process.env.SPRING_URL ?? 'http://localhost:8080'
+  const res = await fetch(`${springUrl}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
