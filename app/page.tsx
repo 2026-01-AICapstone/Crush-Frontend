@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation'
 import { v4 as uuidv4 } from 'uuid'
 import Sidebar from '@/components/Sidebar'
 
-const QUICK_ACTIONS = ['CRUSH란 무엇인가요?', '클러스터 탐지는 어떻게 작동하나요?', '비교 시연 시작하기']
+const QUICK_ACTIONS = [
+  'What is CRUSH?',
+  'How does cluster-level detection work?',
+  'Begin a comparative trial',
+]
 
 export default function LandingPage() {
   const router = useRouter()
@@ -23,77 +27,115 @@ export default function LandingPage() {
     <div className="flex h-screen overflow-hidden">
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
 
-      <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-crush-purple/5 blur-[120px]" />
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-crush-green/5 blur-[80px]" />
+      <main className="flex-1 overflow-y-auto lab-paper relative">
+        {/* page corner stamp */}
+        <div className="absolute top-6 right-10 font-mono text-[11px] tracking-[0.18em] text-lab-muted text-right leading-relaxed">
+          DATE 2026-04-28
+          <br />
+          PAGE 1 / 18
         </div>
 
-        <div className="z-10 flex flex-col items-center gap-6 w-full max-w-xl px-6">
-          {/* Logo */}
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                <path
-                  d="M32 4L8 16v18c0 14 10 26.5 24 30 14-3.5 24-16 24-30V16L32 4z"
-                  fill="#39d98a"
-                  fillOpacity="0.1"
-                  stroke="#39d98a"
-                  strokeWidth="1.5"
-                />
-                <path d="M22 33l7 7 14-14" stroke="#39d98a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <div className="text-center">
-              <h1 className="text-4xl font-bold tracking-widest text-white">CRUSH</h1>
-              <p className="text-xs text-gray-600 tracking-[0.3em] mt-1">CLUSTER-BASED REPELLING UNIT FOR SAFETY & HARMFUL</p>
-              <div className="flex items-center justify-center gap-4 mt-2 text-[10px] text-gray-700 tracking-widest">
-                <span>AI 안전</span>
-                <span>·</span>
-                <span>비교 출력</span>
-                <span>·</span>
-                <span>DUAL-MODEL COMPARISON</span>
-              </div>
-            </div>
-          </div>
+        {/* red margin line */}
+        <div
+          className="absolute top-0 bottom-0 w-px bg-lab-accent opacity-40 pointer-events-none"
+          style={{ left: 130 }}
+        />
 
-          <p className="text-center text-gray-400 text-sm leading-relaxed">
-            클러스터 기반 유해 콘텐츠 탐지·차단 AI 안전 제어 시스템.<br />
-            Baseline LLM과 CRUSH의 응답을 나란히 비교하여<br />
-            안전 제어의 실질적 차이를 직접 확인하세요.
+        <div className="max-w-[760px] pl-[170px] pr-12 pt-20 pb-16">
+          <p className="font-mono text-[11px] tracking-[0.18em] uppercase text-lab-accent mb-2">
+            Experiment 048
           </p>
 
-          {/* Input */}
-          <div className="w-full relative">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && start()}
-              placeholder="무엇이든 물어보세요..."
-              className="w-full bg-bg-card border border-crush-border rounded-xl px-5 py-4 pr-14 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-crush-purple transition-colors"
-            />
-            <button
-              onClick={() => start()}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-crush-purple rounded-lg flex items-center justify-center hover:bg-crush-purple2 transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
+          <h1 className="text-[40px] font-bold leading-[1.1] tracking-tight text-lab-ink mb-4 text-balance">
+            CRUSH: Cluster-based Repelling Units
+            <br />
+            for Safety against Harmful Generation
+          </h1>
+
+          <p className="font-hand text-[24px] text-lab-accent mb-7 inline-block -rotate-[1deg]">
+            "does cluster-repel actually work?" ← RQ
+          </p>
+
+          {/* Hypothesis */}
+          <section className="mb-8">
+            <p className="font-mono text-[11px] tracking-[0.16em] uppercase text-lab-muted mb-2">
+              Hypothesis (H₁)
+            </p>
+            <p className="text-[15.5px] leading-[1.65] text-lab-ink text-justify hyphens-auto">
+              Hidden states of harmful trajectories form{' '}
+              <span className="lab-underline">cluster-separable manifolds</span> at
+              intermediate transformer layers. Projecting decoding states{' '}
+              <em>away</em> from these centroids should suppress harmful
+              continuations while preserving benign capability — measured as a drop
+              in <strong>Attack Success Rate</strong> with negligible regression on
+              MMLU / TruthfulQA.
+            </p>
+          </section>
+
+          {/* Materials */}
+          <section className="relative border-[1.5px] border-lab-ink bg-lab-paper2/80 px-5 py-4 mb-8 lab-shadow">
+            <span className="absolute -top-3 right-4 font-mono text-[9px] tracking-[0.18em] px-2 py-[3px] bg-lab-accent text-lab-paper rotate-[2deg] inline-block">
+              IRB-APPROVED
+            </span>
+            <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-lab-muted mb-2">
+              Materials
+            </p>
+            <ul className="pl-5 text-[14px] leading-[1.85] list-disc text-lab-ink">
+              <li>Base model: Llama-2-7B-Instruct (frozen)</li>
+              <li>Cluster set: 8 centroids, k-means @ ℓ = 14</li>
+              <li>Eval suites: WildGuardTest, ProfBing, GCG, AutoDAN, RAP, OOD</li>
+              <li>Seeds: {`{1, 7, 42}`}</li>
+            </ul>
+          </section>
+
+          {/* Probe input */}
+          <section className="mb-6">
+            <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-lab-muted mb-2">
+              §1.2 issue a probe
+            </p>
+            <div className="relative border-[1.5px] border-lab-ink bg-lab-paper2 lab-shadow">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && start()}
+                placeholder="ask anything…"
+                className="w-full bg-transparent px-4 py-3.5 pr-14 text-[15px] text-lab-ink placeholder-lab-muted/70 focus:outline-none font-serif italic"
+              />
+              <button
+                onClick={() => start()}
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-lab-ink text-lab-paper font-mono text-[10px] tracking-[0.16em] hover:bg-lab-accent transition-colors lab-shadow-sm"
+              >
+                SUBMIT ↵
+              </button>
+            </div>
+
+            {/* Quick actions */}
+            <div className="flex flex-wrap gap-2 mt-3">
+              {QUICK_ACTIONS.map((q) => (
+                <button
+                  key={q}
+                  onClick={() => start(q)}
+                  className="px-3 py-1.5 border-[1.5px] border-lab-ink text-[12px] text-lab-ink hover:bg-lab-highlight/50 transition-colors italic font-serif lab-shadow-sm bg-lab-paper2"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* CTA row */}
+          <div className="flex items-center gap-4 mb-12">
+            <span className="font-hand text-[20px] text-lab-accent -rotate-[3deg] inline-block">
+              ↑ start here!
+            </span>
           </div>
 
-          {/* Quick actions */}
-          <div className="flex flex-wrap gap-2 justify-center">
-            {QUICK_ACTIONS.map((q) => (
-              <button
-                key={q}
-                onClick={() => start(q)}
-                className="px-4 py-2 rounded-full border border-crush-border text-xs text-gray-400 hover:text-white hover:border-crush-purple/50 transition-all bg-bg-secondary/50"
-              >
-                {q}
-              </button>
-            ))}
+          {/* Footnote */}
+          <div className="pt-2 border-t border-lab-ink/60 text-[11px] italic text-lab-muted flex justify-between">
+            <span>
+              Witnessed by: A. Reviewer (initials: AR) · Apr 28, 2026
+            </span>
+            <span>cf. notebook vol. II, pp. 102–110</span>
           </div>
         </div>
       </main>

@@ -20,95 +20,175 @@ export default function ChatPanel({
   lastInterventionType = 'NONE',
   lastLayer,
 }: Props) {
-  const accentColor = isBaseline ? 'text-gray-400' : 'text-crush-purple'
-  const dotColor = isBaseline ? 'bg-gray-500' : 'bg-crush-purple'
+  const armLabel = isBaseline ? 'Control arm' : 'Treatment arm'
+  const armColor = isBaseline ? 'text-lab-muted' : 'text-lab-accent'
+  const sublabel = isBaseline
+    ? 'M₀ · 7B-Instruct, no intervention'
+    : 'M₀ + cluster-repel'
 
   return (
-    <div className="flex flex-col h-full border-r border-crush-border last:border-r-0">
-      {/* Panel Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-crush-border bg-bg-secondary/50">
-        <div className="flex items-center gap-2">
-          <span className={`w-2 h-2 rounded-full ${dotColor}`} />
-          <span className={`text-sm font-semibold ${accentColor}`}>{title}</span>
+    <div className="flex flex-col h-full border-r-[1.5px] border-lab-ink last:border-r-0 lab-paper">
+      {/* Panel header */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-lab-ink bg-lab-paper2/60">
+        <div>
+          <p className={`font-mono text-[10px] tracking-[0.16em] uppercase ${armColor}`}>
+            {armLabel}
+          </p>
+          <h3 className="text-[15px] font-bold text-lab-ink leading-tight">
+            {title}
+          </h3>
         </div>
-        <div className="flex gap-3 text-xs text-gray-600">
-          <button className="hover:text-gray-300 transition-colors">인쇄</button>
-          <button className="hover:text-gray-300 transition-colors">새로고침</button>
-          <button className="hover:text-gray-300 transition-colors">코드</button>
+        <div className="flex flex-col items-end">
+          <span className="font-mono text-[10px] text-lab-muted">{sublabel}</span>
+          <div className="flex gap-3 text-[10px] text-lab-muted font-mono uppercase tracking-[0.12em] mt-0.5">
+            <button className="hover:text-lab-ink transition-colors">print</button>
+            <button className="hover:text-lab-ink transition-colors">refresh</button>
+            <button className="hover:text-lab-ink transition-colors">code</button>
+          </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+        {messages.length === 0 && !loading && (
+          <p className="font-hand text-[16px] text-lab-muted text-center mt-12">
+            issue a probe below ↓
+          </p>
+        )}
         {messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} fade-in`}>
-            <div className={`max-w-[85%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col`}>
-              {/* Risk badge for AI messages */}
-              {msg.role === 'assistant' && !isBaseline && msg.riskScore != null && msg.riskScore > 0.1 && (
-                <RiskBadge
-                  riskScore={msg.riskScore}
-                  riskCategory={msg.riskCategory || ''}
-                  interventionType={msg.interventionType || 'NONE'}
-                  detectedLayer={msg.detectedLayer}
-                />
-              )}
-
-              <div
-                className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
-                  msg.role === 'user'
-                    ? 'bg-bg-hover text-white rounded-tr-sm'
-                    : isBaseline
-                    ? 'bg-bg-card text-gray-200 rounded-tl-sm'
-                    : 'bg-crush-purple/10 border border-crush-purple/20 text-gray-200 rounded-tl-sm'
-                }`}
-              >
-                {msg.content}
-              </div>
-            </div>
-          </div>
+          <ChatLine key={i} msg={msg} idx={i} isBaseline={isBaseline} />
         ))}
 
         {loading && (
-          <div className="flex justify-start fade-in">
-            <div className="px-4 py-3 rounded-2xl bg-bg-card text-gray-500 text-sm">
-              <span className="inline-flex gap-1">
-                <span className="w-1.5 h-1.5 bg-gray-600 rounded-full animate-bounce [animation-delay:0ms]" />
-                <span className="w-1.5 h-1.5 bg-gray-600 rounded-full animate-bounce [animation-delay:150ms]" />
-                <span className="w-1.5 h-1.5 bg-gray-600 rounded-full animate-bounce [animation-delay:300ms]" />
+          <div className="lab-fade-in">
+            <div className="flex items-baseline gap-2 mb-1">
+              <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-lab-muted">
+                Awaiting response…
               </span>
+              <div className="flex-1 h-px bg-lab-ink opacity-50" />
             </div>
+            <span className="inline-flex gap-1 items-center pt-1">
+              <span className="w-1.5 h-1.5 bg-lab-ink rounded-full animate-bounce [animation-delay:0ms]" />
+              <span className="w-1.5 h-1.5 bg-lab-ink rounded-full animate-bounce [animation-delay:150ms]" />
+              <span className="w-1.5 h-1.5 bg-lab-ink rounded-full animate-bounce [animation-delay:300ms]" />
+            </span>
           </div>
         )}
-
       </div>
 
-      {/* Status Bar */}
-      <div className="px-4 py-2 border-t border-crush-border bg-bg-secondary/30 flex items-center gap-4 text-xs font-mono">
-        <span className="text-gray-600">RISK SCORE</span>
-        <span className={
-          lastRiskScore >= 0.7 ? 'text-risk-high font-bold' :
-          lastRiskScore >= 0.4 ? 'text-risk-mid font-bold' :
-          'text-risk-low'
-        }>
+      {/* Status footer */}
+      <div className="px-4 py-2 border-t-[1.5px] border-lab-ink bg-lab-paper2/60 flex items-center gap-4 text-[11px] font-mono">
+        <span className="text-lab-muted uppercase tracking-[0.14em]">ŝ</span>
+        <span
+          className={
+            isBaseline
+              ? 'text-lab-muted'
+              : lastRiskScore >= 0.7
+              ? 'text-risk-high font-bold'
+              : lastRiskScore >= 0.4
+              ? 'text-risk-mid font-bold'
+              : 'text-risk-low'
+          }
+        >
           {isBaseline ? '—' : lastRiskScore.toFixed(2)}
         </span>
 
-        <span className="text-gray-600 ml-2">INTERVENTION</span>
-        <span className={
-          lastInterventionType === 'BLOCK' ? 'text-risk-high font-bold' :
-          lastInterventionType === 'NONE' ? 'text-gray-500' :
-          'text-risk-mid font-bold'
-        }>
+        <span className="text-lab-muted uppercase tracking-[0.14em] ml-2">
+          intervene
+        </span>
+        <span
+          className={
+            isBaseline
+              ? 'text-lab-muted'
+              : lastInterventionType === 'BLOCK'
+              ? 'text-risk-high font-bold'
+              : lastInterventionType === 'NONE'
+              ? 'text-lab-muted'
+              : 'text-risk-mid font-bold'
+          }
+        >
           {isBaseline ? 'NONE' : lastInterventionType}
         </span>
 
         {!isBaseline && lastLayer != null && (
           <>
-            <span className="text-gray-600 ml-2">LAYER</span>
-            <span className="text-crush-purple">{lastLayer}</span>
+            <span className="text-lab-muted uppercase tracking-[0.14em] ml-2">ℓ</span>
+            <span className="text-lab-accent">{lastLayer}</span>
           </>
         )}
       </div>
+    </div>
+  )
+}
+
+function ChatLine({
+  msg,
+  idx,
+  isBaseline,
+}: {
+  msg: PanelMessage
+  idx: number
+  isBaseline: boolean
+}) {
+  if (msg.role === 'user') {
+    return (
+      <div className="lab-fade-in">
+        <div className="flex items-baseline gap-2 mb-1">
+          <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-lab-muted">
+            Q{String(Math.floor(idx / 2) + 1).padStart(2, '0')} · prompt
+          </span>
+          <div className="flex-1 h-px bg-lab-ink opacity-50" />
+        </div>
+        <p className="text-[14px] leading-[1.55] italic text-lab-ink">
+          “{msg.content}”
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="lab-fade-in relative">
+      <div className="flex items-baseline gap-2 mb-1 flex-wrap">
+        <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-lab-muted">
+          A{String(Math.floor(idx / 2) + 1).padStart(2, '0')} · response
+        </span>
+        {!isBaseline && msg.riskScore != null && (
+          <>
+            <span className="font-mono text-[10px] text-lab-accent tracking-[0.1em]">
+              ŝ = {msg.riskScore.toFixed(2)}
+            </span>
+            {msg.detectedLayer != null && (
+              <span className="font-mono text-[10px] text-lab-muted tracking-[0.1em]">
+                ℓ = {msg.detectedLayer}
+              </span>
+            )}
+            {msg.interventionType && msg.interventionType !== 'NONE' && (
+              <span className="font-mono text-[10px] text-lab-muted tracking-[0.1em]">
+                · {msg.interventionType}
+              </span>
+            )}
+          </>
+        )}
+        <div className="flex-1 h-px bg-lab-ink opacity-50 min-w-[20px]" />
+      </div>
+
+      {!isBaseline &&
+        msg.riskScore != null &&
+        msg.riskScore > 0.1 && (
+          <RiskBadge
+            riskScore={msg.riskScore}
+            riskCategory={msg.riskCategory || ''}
+            interventionType={msg.interventionType || 'NONE'}
+            detectedLayer={msg.detectedLayer}
+          />
+        )}
+
+      <p
+        className="text-[14px] leading-[1.65] text-lab-ink whitespace-pre-wrap"
+        style={{ textAlign: 'justify', hyphens: 'auto' }}
+      >
+        {msg.content}
+      </p>
     </div>
   )
 }
