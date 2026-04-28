@@ -35,13 +35,7 @@ export default function LandingPage() {
           PAGE 1 / 18
         </div>
 
-        {/* red margin line */}
-        <div
-          className="absolute top-0 bottom-0 w-px bg-lab-accent opacity-40 pointer-events-none"
-          style={{ left: 130 }}
-        />
-
-        <div className="max-w-[760px] pl-[170px] pr-12 pt-20 pb-16">
+        <div className="w-full max-w-5xl mx-auto px-8 sm:px-12 lg:px-16 pt-16 pb-16">
           <p className="font-mono text-[11px] tracking-[0.18em] uppercase text-lab-accent mb-2">
             Experiment 048
           </p>

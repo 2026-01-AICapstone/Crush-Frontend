@@ -52,14 +52,6 @@ export default function Sidebar({ collapsed = false, onToggle, activeSessionId }
       className="relative flex flex-col h-screen lab-paper border-r-[1.5px] border-lab-ink transition-all duration-300"
       style={{ width: collapsed ? 56 : 240 }}
     >
-      {/* red margin line */}
-      {!collapsed && (
-        <div
-          className="absolute top-0 bottom-0 w-px bg-lab-accent opacity-50 pointer-events-none"
-          style={{ left: 40 }}
-        />
-      )}
-
       {/* Masthead */}
       <div className="px-4 pt-5 pb-4 border-b-[1.5px] border-lab-ink flex items-start justify-between">
         {!collapsed ? (

@@ -10,8 +10,8 @@ const config: Config = {
       colors: {
         // Lab notebook palette
         lab: {
-          paper:    '#f6f3e9',  // aged paper
-          paper2:   '#fbfaf2',  // brighter card
+          paper:    '#faf9f5',  // aged paper
+          paper2:   '#fefefe',  // brighter card
           grid:     '#bcd6e0',  // pale-blue grid line
           ink:      '#1d2536',  // navy ink
           ink2:     '#2b364c',
