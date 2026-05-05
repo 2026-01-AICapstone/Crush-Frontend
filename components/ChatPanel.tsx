@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
 import { PanelMessage } from '@/lib/types'
 import RiskBadge from './RiskBadge'
 
@@ -26,8 +29,18 @@ export default function ChatPanel({
     ? 'M₀ · 7B-Instruct, no intervention'
     : 'M₀ + cluster-repel'
 
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 120
+    if (nearBottom) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, loading])
+
   return (
-    <div className="flex flex-col h-full border-r-[1.5px] border-lab-ink last:border-r-0 lab-paper">
+    <div className="flex flex-col h-full min-h-0 border-r-[1.5px] border-lab-ink last:border-r-0 lab-paper">
       {/* Panel header */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-lab-ink bg-lab-paper2/60">
         <div>
@@ -49,7 +62,7 @@ export default function ChatPanel({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 py-5 space-y-5">
         {messages.length === 0 && !loading && (
           <p className="font-hand text-[16px] text-lab-muted text-center mt-12">
             issue a probe below ↓
@@ -74,6 +87,8 @@ export default function ChatPanel({
             </span>
           </div>
         )}
+
+        <div ref={bottomRef} />
       </div>
 
       {/* Status footer */}
@@ -140,7 +155,7 @@ function ChatLine({
           <div className="flex-1 h-px bg-lab-ink opacity-50" />
         </div>
         <p className="text-[14px] leading-[1.55] italic text-lab-ink">
-          “{msg.content}”
+          "{msg.content}"
         </p>
       </div>
     )

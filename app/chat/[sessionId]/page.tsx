@@ -121,7 +121,7 @@ export default function ChatPage() {
           />
 
           {/* Treatment arm — placeholder */}
-          <div className="flex flex-col h-full lab-paper">
+          <div className="flex flex-col h-full min-h-0 lab-paper">
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-lab-ink bg-lab-paper2/60">
               <div>
                 <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-lab-muted">
