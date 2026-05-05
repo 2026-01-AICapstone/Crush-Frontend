@@ -100,7 +100,7 @@ export default function Sidebar({ collapsed = false, onToggle, activeSessionId }
               {[
                 { href: '/', num: '§1', label: 'Field log', id: 'landing' },
                 { href: '#', num: '§2', label: 'Comparative trial', id: 'chat', muted: true },
-                { href: '/benchmark', num: '§3', label: 'Result tables', id: 'dash' },
+                { href: '/paper', num: '§3', label: 'Paper draft', id: 'paper' },
               ].map((it) => (
                 <Link
                   key={it.id}
