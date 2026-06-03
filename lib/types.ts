@@ -22,6 +22,13 @@ export interface ChatApiResponse {
   processingTimeMs: number
 }
 
+export interface CompareApiResponse {
+  sessionId: string
+  baseline: ChatApiResponse
+  safety: ChatApiResponse
+  processingTimeMs: number
+}
+
 export interface SessionSummary {
   sessionId: string
   preview: string

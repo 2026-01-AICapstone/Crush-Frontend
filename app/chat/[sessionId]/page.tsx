@@ -3,9 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import Sidebar from '@/components/Sidebar'
 import ChatPanel from '@/components/ChatPanel'
-import { sendChat } from '@/lib/api'
+import { sendCompare } from '@/lib/api'
 import { Message, PanelMessage } from '@/lib/types'
 
 export default function ChatPage() {
@@ -13,10 +12,15 @@ export default function ChatPage() {
   const searchParams = useSearchParams()
 
   const [baselineMessages, setBaselineMessages] = useState<PanelMessage[]>([])
+  const [safetyMessages, setSafetyMessages] = useState<PanelMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [collapsed, setCollapsed] = useState(false)
   const [activeTab, setActiveTab] = useState<'compare' | 'log' | 'analyze'>('compare')
+
+  // safety 패널의 마지막 risk 정보
+  const [lastRiskScore, setLastRiskScore] = useState(0)
+  const [lastInterventionType, setLastInterventionType] = useState('NONE')
+  const [lastLayer, setLastLayer] = useState<number | null>(null)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const didInit = useRef(false)
@@ -40,18 +44,44 @@ export default function ChatPage() {
 
     const userMsg: PanelMessage = { role: 'user', content: msg }
     setBaselineMessages((prev) => [...prev, userMsg])
+    setSafetyMessages((prev) => [...prev, userMsg])
 
     const history = buildHistory(baselineMessages)
     setLoading(true)
 
     try {
-      const res = await sendChat(sessionId, msg, history)
+      const res = await sendCompare(sessionId, msg, history)
+
+      // baseline 패널
       setBaselineMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: res.finalResponse },
+        { role: 'assistant', content: res.baseline.finalResponse },
       ])
+
+      // safety 패널 (risk 정보 포함)
+      setSafetyMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: res.safety.finalResponse,
+          riskScore: res.safety.riskScore,
+          riskCategory: res.safety.riskCategory,
+          detectedLayer: res.safety.detectedLayer,
+          interventionTriggered: res.safety.interventionTriggered,
+          interventionType: res.safety.interventionType,
+        },
+      ])
+
+      // 하단 상태바 업데이트
+      setLastRiskScore(res.safety.riskScore)
+      setLastInterventionType(res.safety.interventionType)
+      setLastLayer(res.safety.detectedLayer)
     } catch {
       setBaselineMessages((prev) => [
+        ...prev,
+        { role: 'assistant', content: '[response error]' },
+      ])
+      setSafetyMessages((prev) => [
         ...prev,
         { role: 'assistant', content: '[response error]' },
       ])
@@ -63,14 +93,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar
-        collapsed={collapsed}
-        onToggle={() => setCollapsed(!collapsed)}
-        activeSessionId={sessionId}
-      />
-
-      <div className="flex-1 flex flex-col overflow-hidden lab-paper">
+      <div className="flex h-full flex-col overflow-hidden lab-paper">
         {/* Top bar */}
         <header className="flex items-center justify-between px-5 py-3 border-b-[1.5px] border-lab-ink bg-lab-paper2/60 shrink-0">
           <div>
@@ -112,7 +135,7 @@ export default function ChatPage() {
 
         {/* Dual panel */}
         <div className="flex-1 grid grid-cols-2 overflow-hidden">
-          {/* Control arm */}
+          {/* Control arm — Baseline LLM */}
           <ChatPanel
             title="Baseline LLM"
             isBaseline={true}
@@ -120,59 +143,16 @@ export default function ChatPage() {
             loading={loading}
           />
 
-          {/* Treatment arm — placeholder */}
-          <div className="flex flex-col h-full lab-paper">
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-lab-ink bg-lab-paper2/60">
-              <div>
-                <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-lab-muted">
-                  Treatment arm
-                </p>
-                <h3 className="text-[15px] font-bold text-lab-ink/60 leading-tight">
-                  CRUSH
-                </h3>
-              </div>
-              <span className="font-mono text-[10px] text-lab-muted tracking-[0.14em] uppercase">
-                pending integration
-              </span>
-            </div>
-
-            <div className="flex-1 flex flex-col items-center justify-center gap-5 px-8 text-center relative">
-              {/* taped index card */}
-              <div className="relative border-[1.5px] border-lab-ink bg-lab-paper2 px-7 py-6 lab-shadow rotate-[-1deg]">
-                <span className="lab-tape" />
-                <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-lab-muted mb-2">
-                  Apparatus
-                </p>
-                <p className="font-serif text-[16px] font-bold text-lab-ink mb-1">
-                  M₀ + cluster-repel
-                </p>
-                <p className="font-hand text-[16px] text-lab-accent">
-                  build in progress…
-                </p>
-              </div>
-
-              <ul className="text-[12.5px] text-lab-ink/85 leading-[1.85] text-left list-disc pl-6">
-                <li>input-layer detection</li>
-                <li>output-layer detection</li>
-                <li>risk scoring (ŝ ∈ [0, 1])</li>
-                <li>intervention classifier (NONE / STEER / BLOCK)</li>
-              </ul>
-
-              <p className="font-hand text-[16px] text-lab-muted -rotate-[2deg] mt-2">
-                comparison panel will appear here once spring service is wired
-              </p>
-            </div>
-
-            {/* status footer */}
-            <div className="px-4 py-2 border-t-[1.5px] border-lab-ink bg-lab-paper2/60 flex items-center gap-4 text-[11px] font-mono">
-              <span className="text-lab-muted uppercase tracking-[0.14em]">ŝ</span>
-              <span className="text-lab-muted">—</span>
-              <span className="text-lab-muted uppercase tracking-[0.14em] ml-2">
-                intervene
-              </span>
-              <span className="text-lab-muted">—</span>
-            </div>
-          </div>
+          {/* Treatment arm — CRUSH */}
+          <ChatPanel
+            title="CRUSH"
+            isBaseline={false}
+            messages={safetyMessages}
+            loading={loading}
+            lastRiskScore={lastRiskScore}
+            lastInterventionType={lastInterventionType}
+            lastLayer={lastLayer}
+          />
         </div>
 
         {/* Composer */}
@@ -186,7 +166,7 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-              placeholder="issue a probe to the baseline…"
+              placeholder="issue a probe to both arms…"
               className="w-full bg-transparent px-9 py-3 pr-20 text-[14px] text-lab-ink placeholder-lab-muted/70 focus:outline-none font-serif italic"
               disabled={loading}
             />
@@ -199,10 +179,9 @@ export default function ChatPage() {
             </button>
           </div>
           <p className="text-center text-[11px] italic text-lab-muted mt-2">
-            Fig. — control arm active · treatment arm pending integration
+            Fig. — dual-arm comparison · baseline (left) vs CRUSH adapter (right)
           </p>
         </div>
       </div>
-    </div>
   )
 }
