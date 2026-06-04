@@ -49,7 +49,7 @@ export async function sendCompare(
       sessionId,
       userMessage,
       conversationHistory: history,
-      mode: 'compare',
+      mode: 'baseline',
     }),
   })
   if (!res.ok) throw new Error(`Compare API error: ${res.status}`)
