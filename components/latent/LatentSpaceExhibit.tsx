@@ -47,7 +47,7 @@ type TooltipState = {
   top: number
 }
 
-const DATA_URLS = ['/data/guardrail_latent_8B.json', '/data/guardrail_latent_mock.json']
+const DATA_URLS = ['/data/guardrail_latent_8B_full.json', '/data/guardrail_latent_8B.json', '/data/guardrail_latent_mock.json']
 
 async function loadLatentData() {
   let lastError: unknown = null

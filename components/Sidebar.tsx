@@ -23,8 +23,8 @@ function groupByDate(sessions: SessionSummary[], language: 'en' | 'ko') {
   sessions.forEach((session) => {
     const date = new Date(session.createdAt)
     let label: string
-    if (date.toDateString() === today.toDateString()) label = language === 'ko' ? '?ㅻ뒛' : 'Today'
-    else if (date.toDateString() === yesterday.toDateString()) label = language === 'ko' ? '?댁젣' : 'Yesterday'
+    if (date.toDateString() === today.toDateString()) label = language === 'ko' ? '오늘' : 'Today'
+    else if (date.toDateString() === yesterday.toDateString()) label = language === 'ko' ? '어제' : 'Yesterday'
     else {
       label = date.toLocaleDateString(language === 'ko' ? 'ko-KR' : 'en-US', {
         month: 'short',
@@ -61,21 +61,21 @@ export default function Sidebar({ collapsed = false, onToggle, activeSessionId }
   }
 
   const copy = {
-    notebook: language === 'ko' ? 'Notebook · Vol. III' : 'Notebook · Vol. III',
-    entry: language === 'ko' ? 'entry no. 048' : 'entry no. 048',
-    newTrial: language === 'ko' ? '새 비교 시작' : 'begin new trial',
+    notebook: language === 'ko' ? '실험 노트 · Vol. III' : 'Notebook · Vol. III',
+    entry: language === 'ko' ? '기록 048' : 'entry no. 048',
+    newTrial: language === 'ko' ? '새 비교 실험' : 'begin new trial',
     index: language === 'ko' ? '메뉴' : 'Index',
     recent: language === 'ko' ? '최근 대화' : 'Recent trials',
-    empty: language === 'ko' ? '아직 대화가 없습니다. 위에서 새로 시작하세요.' : 'no trials yet - begin one above',
+    empty: language === 'ko' ? '아직 기록이 없습니다. 새 비교 실험을 시작해 보세요.' : 'no trials yet - begin one above',
     untitled: language === 'ko' ? '제목 없는 대화' : 'untitled trial',
     note:
       language === 'ko'
-        ? '"테스트 코드 수령 후 모델별 결과를 확인하세요."'
+        ? '기본 모델과 CRUSH 적용 결과를 나란히 비교합니다.'
         : '"check seed-3 results before tomorrow\'s group meeting!"',
   }
 
   const navItems = [
-    { href: '/', num: 'No.1', label: language === 'ko' ? '홈' : 'Home', id: 'landing' },
+    { href: '/', num: 'No.1', label: language === 'ko' ? '개요' : 'Home', id: 'landing' },
     {
       href: '#',
       num: 'No.2',
@@ -94,7 +94,7 @@ export default function Sidebar({ collapsed = false, onToggle, activeSessionId }
 
   return (
     <aside
-      className="relative flex h-screen flex-col border-r-[1.5px] border-lab-ink lab-paper transition-all duration-300"
+      className="relative z-10 flex h-screen flex-col border-r-[1.5px] border-lab-ink lab-paper transition-all duration-300"
       style={{ width: collapsed ? 56 : 240 }}
     >
       <div className="flex items-start justify-between border-b-[1.5px] border-lab-ink px-4 pb-4 pt-5">
@@ -115,7 +115,7 @@ export default function Sidebar({ collapsed = false, onToggle, activeSessionId }
         )}
         <button
           onClick={onToggle}
-          className="ml-auto text-lg leading-none text-lab-muted transition-colors hover:text-lab-ink"
+          className="ml-auto flex h-7 w-7 items-center justify-center border border-transparent text-lg leading-none text-lab-muted transition-colors hover:border-lab-ink hover:text-lab-ink"
           aria-label="Toggle sidebar"
         >
           {collapsed ? '>' : '<'}
@@ -143,7 +143,7 @@ export default function Sidebar({ collapsed = false, onToggle, activeSessionId }
       <div className="px-3 py-3">
         <button
           onClick={newChat}
-          className="flex w-full items-center gap-2 border-[1.5px] border-lab-ink bg-lab-paper2 px-3 py-2 text-sm text-lab-ink transition-colors hover:bg-lab-highlight/40 lab-shadow-sm"
+          className="flex w-full items-center gap-2 border-[1.5px] border-lab-ink bg-lab-paper2 px-3 py-2 text-sm text-lab-ink transition-colors hover:bg-lab-highlight/40 focus:outline-none focus:ring-2 focus:ring-lab-accent/30 lab-shadow-sm"
         >
           <span className="text-base leading-none text-lab-accent">+</span>
           {!collapsed && <span className="italic">{copy.newTrial}</span>}

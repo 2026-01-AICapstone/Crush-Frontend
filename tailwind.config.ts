@@ -29,9 +29,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ['"Source Serif 4"', '"Source Serif Pro"', 'Georgia', 'serif'],
-        mono:  ['"IBM Plex Mono"', '"JetBrains Mono"', 'monospace'],
-        hand:  ['"Caveat"', '"Patrick Hand"', 'cursive'],
+        serif: ['"Source Serif 4"', '"Noto Sans KR"', '"Source Serif Pro"', 'Georgia', 'serif'],
+        mono:  ['"IBM Plex Mono"', '"Noto Sans KR"', '"JetBrains Mono"', 'monospace'],
+        hand:  ['"Caveat"', '"Noto Sans KR"', '"Patrick Hand"', 'cursive'],
       },
       backgroundImage: {
         'lab-grid': `linear-gradient(rgba(188,214,224,0.35) 1px, transparent 1px),

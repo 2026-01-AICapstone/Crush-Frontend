@@ -20,16 +20,16 @@ export default function RiskBadge({
 
   const label = riskCategory
     ? riskCategory.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-    : 'Unknown'
+    : ''
 
   return (
     <div
       className={`inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.14em] px-2 py-[3px] border-[1.5px] ${tone} mb-2 lab-shadow-sm`}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-current lab-blink" />
-      <span>anomaly · {label}</span>
+      <span>{label ? `anomaly · ${label}` : 'anomaly'}</span>
       {detectedLayer != null && (
-        <span className="opacity-70">ℓ = {detectedLayer}</span>
+        <span className="opacity-70">L= {detectedLayer}</span>
       )}
       {interventionType !== 'NONE' && (
         <span className="ml-1 px-1.5 py-[1px] bg-current/15 font-bold">
